@@ -1,4 +1,4 @@
-const url = 'http://localhost:5000/analyze';
+const url = 'http://localhost:5000/meanreversion';
 
 const params = new URLSearchParams({
     ticker: 'OII',
@@ -8,14 +8,19 @@ const params = new URLSearchParams({
 
 fetch(`${url}?${params}`)
     .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
+        console.log('Response Status:', response.status);
+        console.log('Response Headers:', response.headers);
+        return response.text(); // Read the response as text
     })
-    .then(data => {
-        console.log(data);
-        // Process the data 
+    .then(text => {
+        console.log('Response Text:', text);
+        try {
+            const data = JSON.parse(text); // Attempt to parse as JSON
+            console.log('Parsed Data:', data);
+            return data;
+        } catch (e) {
+            console.error('JSON Parsing Error:', e);
+        }
     })
     .catch(error => {
         console.error('Error:', error);

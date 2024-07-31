@@ -26,20 +26,22 @@
     </style> -->
 </head>
 <body class="ps-4 pt-3">
-    <h1>Investing for ID10T$</h1>
-     <form id="analyze-form" action="/analyze" method="get" onsubmit="showSpinner()">
+    <h1 class="header">Investing for ID10T$</h1>
+     <form id="analyze-form" action="/analyze" method="get" class="form-container" onsubmit="showSpinner()">
 
-        <label for="ticker">Ticker:</label>
-        <input type="text" id="ticker" name="ticker" required><br><br>
+        <label for="ticker" class="form-label  "><h4>Ticker:</h4></label>
+        <input type="text" id="ticker" class="form-control mb-0" name="ticker" required><br><br>
 
-        <label for="start_date">Start Date (YYYY-MM-DD):</label>
-        <input type="date" id="start_date" name="start_date" required><br><br>
+        <label for="start_date" class="form-label ">Start Date (YYYY-MM-DD):</label>
+        <input type="date" id="start_date" class="form-control "  name="start_date" required><br><br>
 
-        <label for="end_date">End Date (YYYY-MM-DD):</label>
-        <input type="date" id="end_date" name="end_date" required><br><br>
+        <label for="end_date" class="form-label">End Date (YYYY-MM-DD):</label>
+        <input type="date" id="end_date"  class="form-control"  name="end_date" required><br><br>
 
-        <input type="submit" value="Analyze">
+        <input type="submit"  class="btn btn-success" value="Analyze">
     </form>
+
+
 
     <!-- <div id="spinner" class="spinner-container d-flex">
         <div class="spinner-border" role="status">
@@ -63,10 +65,11 @@
                 </tr>
             {% endfor %}
         </table>
+        {% endif %}
 
-    {% endif %}
+  
         {% if sentiment %}
-        <h2>Sentiment Analysis</h2>
+        <h3>Sentiment Analysis</h3>
         <div>{{ sentiment[0].sentiment | safe }}</div>
     {% endif %}
     {% if img_url %}

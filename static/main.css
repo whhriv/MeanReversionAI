@@ -10,3 +10,26 @@ body {
     max-width: 60%;  
     height: auto;     
 }
+.form-container {
+    width: 25%;
+    margin: auto; /* Centers the form horizontally */
+
+    margin-left: 0; /* Aligns form to the left */
+    margin-right: 0; /* Optional: Adjust if you want specific right margin */
+
+}
+
+
+
+
+
+
+
+
+.header {
+
+    margin-left: 0; /* Aligns form to the left */
+    margin-right: 0; /* Optional: Adjust if you want specific right margin */
+    text-align: center; /* Centers the header */
+    margin-bottom: 30px; /* Adds some space below the header */
+}

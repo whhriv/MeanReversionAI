@@ -145,16 +145,21 @@ def mean_revision():
         
         # Convert the relevant columns to a dictionary format
         result = analyzed_data[['Close', 'Mean', 'Upper', 'Lower', 'Position']].tail().to_dict(orient='records')
+        print("Returning JSON response:", result)
 
         return jsonify(result)
 
     except Exception as e:
+        print("Error:", str(e))
+
         return jsonify({'error': str(e)}), 500
 # [testing] ONLY MEAN REVISION DATA ENDPOINT FOR GRAPHING FE [testing]
 
+
+#[testing] plot route - plot data hardcoded. 
 @app.route('/plot')
 def plot():
-    # Create a sample plot
+    
     plt.figure(figsize=(14, 7))
     plt.plot([1, 2, 3], [4, 5, 6], label='Test Plot')
     plt.title('Test Plot')
@@ -163,12 +168,12 @@ def plot():
     plt.legend()
     plt.grid(True)
 
-    # Save plot to in-memory file
+    
     img = io.BytesIO()
     plt.savefig(img, format='png')
     img.seek(0)
 
-    # Encode plot to base64
+    
     img_base64 = base64.b64encode(img.getvalue()).decode('utf8')
     img_url = f'data:image/png;base64,{img_base64}'
 
@@ -242,7 +247,7 @@ def analyze_stock():
 
         # return result_json CORRECT-UNCOMMENT IF BELOW IS WRONG
         # return render_template('index.html', result=result_json, sentiment=sentiment_analysis, img_url=img_url) 
-        return render_template('index.html', result=result_json, sentiment=sentiment_analysis, img_url=img_url)
+        return render_template('index.html', result=result_json, sentiment=sentiment_analysis, advice=advice, img_url=img_url)
 
     
     except Exception as e:
