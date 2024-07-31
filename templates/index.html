@@ -54,6 +54,8 @@
                 <th>Metric</th>
                 <th>Value</th>
             </tr>
+
+            
             {% for item in result %}
                 <tr>
                     <td>{{ item.Metric }}</td>
@@ -61,6 +63,17 @@
                 </tr>
             {% endfor %}
         </table>
+
     {% endif %}
+        {% if sentiment %}
+        <h2>Sentiment Analysis</h2>
+        <div>{{ sentiment[0].sentiment | safe }}</div>
+    {% endif %}
+    {% if img_url %}
+    <h3 class="mt-3">Mean Reversion Strategy Plot</h3>
+    <img src="{{ img_url }}" alt="Mean Reversion Strategy Plot" class="image">
+    {% endif %}
+
+    
 </body>
 </html>

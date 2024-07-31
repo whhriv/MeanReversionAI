@@ -5,3 +5,8 @@ body {
     font-family: "Comic Sans MS", "Comic Sans";
 
 }
+
+.image {
+    max-width: 60%;  
+    height: auto;     
+}

@@ -4,6 +4,7 @@ TO RUN [OSX]:
 
 
 pip install -r requirements.txt 
+
 python3 app.py
 
 TO RUN [WINDOWS]:

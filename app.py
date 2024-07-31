@@ -1,10 +1,15 @@
 import os
+import io
+import base64
 from flask import Flask, request, jsonify, render_template
 import requests
 import openai
 import yfinance as yf
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
@@ -41,7 +46,7 @@ def get_investment_advice(data, ticker):
                                     f"Upper Bound: {latest_data['Upper']}\n"
                                     f"Lower Bound: {latest_data['Lower']}\n"
                                     f"Position: {latest_data['Position']}\n\n"
-                                    "Based on this data, and considering a mean reversion strategy, what would you advise for this stock? Should we buy, sell or hold?"}
+                                    "Based on this data, and considering a mean reversion strategy, what would you advise for this stock? Should we buy, sell or hold? "}
     ]
     
     response = openai.chat.completions.create(
@@ -101,7 +106,9 @@ def analyze_sentiment(headlines):
         max_tokens=150
     )
     
-    sentiment = response.choices[0].message.content.strip()
+    sentiment_init = response.choices[0].message.content.strip()
+    sentiment = sentiment_init.replace('\n', '<br>')
+
     sentiment_json = jsonify(sentiment)
     print(sentiment_json)
     # sentiment = response.choices[0].message.content.sentiment.
@@ -145,7 +152,28 @@ def mean_revision():
         return jsonify({'error': str(e)}), 500
 # [testing] ONLY MEAN REVISION DATA ENDPOINT FOR GRAPHING FE [testing]
 
+@app.route('/plot')
+def plot():
+    # Create a sample plot
+    plt.figure(figsize=(14, 7))
+    plt.plot([1, 2, 3], [4, 5, 6], label='Test Plot')
+    plt.title('Test Plot')
+    plt.xlabel('X Axis')
+    plt.ylabel('Y Axis')
+    plt.legend()
+    plt.grid(True)
 
+    # Save plot to in-memory file
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+
+    # Encode plot to base64
+    img_base64 = base64.b64encode(img.getvalue()).decode('utf8')
+    img_url = f'data:image/png;base64,{img_base64}'
+
+    # Render template with image URL
+    return render_template('plot.html', img_url=img_url)
 
 # ROUTE TO ANALYZE STOCK - USED IN /TEMPLATES/INDEX.HTML 
 @app.route('/analyze', methods=['GET'])
@@ -166,21 +194,62 @@ def analyze_stock():
         headlines = get_stock_news(ticker)  
         sentiment_analysis = analyze_sentiment(headlines)  
 
+# [testing] PLOTTING TEST FOR OUTPUT [testing]
+
+         # Generate plot
+        # plt.use("macOSX")
+        plt.style.use('dark_background')
+        plt.figure(figsize=(14, 7))
+        plt.plot(data['Close'], label='Close Price', color='blue')
+        plt.plot(data['Mean'], label='Mean', color='orange')
+        plt.plot(data['Upper'], label='Upper Bound', color='red')
+        plt.plot(data['Lower'], label='Lower Bound', color='green')
+
+        # Highlight buying and selling positions
+        buy_signals = data[data['Position'] == 1]
+        sell_signals = data[data['Position'] == -1]
+
+        plt.scatter(buy_signals.index, buy_signals['Close'], marker='^', color='green', label='Buy Signal', alpha=1)
+        plt.scatter(sell_signals.index, sell_signals['Close'], marker='v', color='red', label='Sell Signal', alpha=1)
+
+        plt.title(f'Mean Reversion Strategy for {ticker}')
+        plt.xlabel('Date')
+        plt.ylabel('Price')
+        plt.legend()
+        plt.grid(True)
+
+        # Save plot to a BytesIO object
+        img = io.BytesIO()
+        plt.savefig(img, format='png')
+        img.seek(0)
+        img_base64 = base64.b64encode(img.getvalue()).decode('utf8')
+        img_url = f'data:image/png;base64,{img_base64}'
+        # print(img_url)
+
+        plt.close()
+
+# [testing] PLOTTING TEST FOR OUTPUT [testing]
+
         
         latest_data = analyzed_data.iloc[-1]
         result_df = pd.DataFrame({
-            'Metric': ['Current Price', 'Mean', 'Upper Bound', 'Lower Bound', 'Position', 'Advice', 'Sentiment'],
-            'Value': [latest_data['Close'], latest_data['Mean'], latest_data['Upper'], latest_data['Lower'], latest_data['Position'], advice, sentiment_analysis]
+            'Metric': ['Current Price', 'Mean', 'Upper Bound', 'Lower Bound', 'Position', 'Advice'],
+            'Value': [latest_data['Close'], latest_data['Mean'], latest_data['Upper'], latest_data['Lower'], latest_data['Position'], advice]
         })
         
         # Convert DataFrame to JSON serializable format
         result_json = result_df.to_dict(orient='records')
 
         # return result_json CORRECT-UNCOMMENT IF BELOW IS WRONG
-        return render_template('index.html', result=result_json, sentiment=sentiment_analysis) 
+        # return render_template('index.html', result=result_json, sentiment=sentiment_analysis, img_url=img_url) 
+        return render_template('index.html', result=result_json, sentiment=sentiment_analysis, img_url=img_url)
+
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
