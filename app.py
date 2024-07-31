@@ -130,8 +130,10 @@ def index():
 
 
 # [testing] ONLY MEAN REVISION DATA ENDPOINT FOR GRAPHING FE [testing]
-@app.route('/meanRevision', methods=['GET'])
-def mean_revision():
+
+
+@app.route('/meanreversion', methods=['GET'])
+def mean_reversion():
     ticker = request.args.get('ticker')
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
@@ -142,18 +144,24 @@ def mean_revision():
     try:
         data = get_stock_data(ticker, start_date, end_date)
         analyzed_data = calculate_mean_reversion(data)
-        
+        advice = get_investment_advice(analyzed_data, ticker)
+
         # Convert the relevant columns to a dictionary format
         result = analyzed_data[['Close', 'Mean', 'Upper', 'Lower', 'Position']].tail().to_dict(orient='records')
+        result.append({'Advice': advice})
+        
+        # Log the result for debugging purposes
         print("Returning JSON response:", result)
 
+        # Return the result in JSON format
         return jsonify(result)
 
     except Exception as e:
+        # Log the error
         print("Error:", str(e))
-
+        # Return the error message in JSON format
         return jsonify({'error': str(e)}), 500
-# [testing] ONLY MEAN REVISION DATA ENDPOINT FOR GRAPHING FE [testing]
+
 
 
 #[testing] plot route - plot data hardcoded. 
