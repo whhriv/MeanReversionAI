@@ -5,7 +5,7 @@ API_KEY = os.environ.get('GOOGLE_GEMINI_API_KEY')
 
 print(API_KEY)
 
-genai.configure(api_key='AIzaSyBgEJwRIJoik2jBX2MrZ7xqkfZPZ5OMk6U')
+genai.configure(api_key='')
 
 model = genai.GenerativeModel('gemini-1.5-flash')
 
@@ -18,7 +18,7 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 
 #         print(API_KEY)
 
-#         genai.configure(api_key='AIzaSyBgEJwRIJoik2jBX2MrZ7xqkfZPZ5OMk6U')
+#         genai.configure(api_key='')
 
 #         model = genai.GenerativeModel('gemini-1.5-flash')
 
